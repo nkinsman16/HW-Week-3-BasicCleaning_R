@@ -1,0 +1,279 @@
+---
+title: An R Markdown document converted from "Homework_for_Week_3.ipynb"
+output: html_document
+---
+
+# Downloading the Data
+
+```{r}
+# Create project folders
+#Function dir.created() is used to create filders on the file system, thus are folder is labeled Data and then within data we are creating two sub folders "raw" and "clean".
+#showWarnings=False is a logical variable the suppresses warning messages if the directory already exists. This is important as it allows the script to run safely without stopping.
+dir.create("data", showWarnings = FALSE)            #Creating the folder "data"
+dir.create("data/raw", showWarnings = FALSE)        #Creating the subfolder "Raw"
+dir.create("data/clean", showWarnings = FALSE)      # Creating the sub folder "clean"
+```
+
+```{r}
+# Confirm files are present
+#The function list.files() is used to display the contents of a directory.
+list.files("data/raw")                             # I downloaded and uploaded the files Infant Mortality, Life expectancy, and Material mortality ratio into this sub folder raw
+```
+
+# Maternal Mortality Ratio
+
+```{r}
+# Read maternal mortality data
+#This code reads the CSV file containing the maternal mortality ratio and stores it into a data frame
+#Read.csv() is assigned to the variable maternal_raw, using the <- which is used to indicate that the data is in its original uncleaned form.
+#stringASFactors is a logical variable that prevents R from automatically converting text columns into factor variables. Very important because it's easier to clean and transform
+maternal_raw <- read.csv("data/raw/Maternal mortality ratio.csv",#creating the data frame maternal_raw
+                          stringsAsFactors = FALSE)
+```
+
+```{r}
+# Inspect structure
+#We use the str() to display a compact summary of the internal structure of the object maternal_raw
+str(maternal_raw)
+```
+
+```{r}
+# View first few rows
+#It returns the fist six observations, and helps to confirm that the data loaded correctly
+#Allows to see the column names, verify the values, and spot obvious issues.
+head(maternal_raw)
+```
+
+```{r}
+# Select only the required columns and rename them
+#We are taking the dataset maternal_raw and selecting the columns we need for the assignmnet
+# We are then renaming the columns by extracting the the columns from maternal_raw
+maternal_clean <- data.frame(           #Creating the datafram maternal_clean
+  country = maternal_raw$name,          # create the column country by extracting the name column
+  variable = maternal_raw$deaths.100,   # create the variable column using the column deaths.100
+  region = maternal_raw$ranking,        # create the variable region using the column ranking
+  stringsAsFactors = FALSE              # Ensures that text variables remain character vectors and not automatically converting to other factors
+)
+```
+
+```{r}
+# Confirm structure after cleaning
+#Looking at the data system using str() to verify
+str(maternal_clean) #verify the dataframe maternal_clean
+```
+
+```{r}
+# View first few rows
+#The function head() is used to display the first few rows of the cleaned data frame.
+head(maternal_clean) # Can see clearly we have just three columns properly labeled.
+```
+
+```{r}
+# Ensure correct data types
+#Sets the data types of the variables of the maternal clean data to ensure they are appropriate for analysis
+#converst the columns using the as.character for text and the as.numeric as numeric to allow for mathematical operations.
+maternal_clean$country <- as.character(maternal_clean$country)  # Ensures that country is Text
+maternal_clean$variable <- as.numeric(maternal_clean$variable)  # Ensures variable is Numeric
+maternal_clean$region <- as.character(maternal_clean$region)    # Ensures region is text
+```
+
+```{r}
+# Confirm structure to ensure the columns are the proper data types
+str(maternal_clean)
+```
+
+```{r}
+# Save cleaned maternal mortality data as CSV
+# write.csv() used to export a data frame from R into a a CSV file.
+write.csv(maternal_clean,                                       #Using the write.csv() we use the maternal_clean file which contains the finalized cleaned version of the dataset.
+          "data/clean/maternal_mortality_clean.csv",            #Specifies the file path and the file name
+          row.names = FALSE)                                    #row.names FALSE is a logical value that prvents R from writing row numbers as an extra column within the CSV file
+```
+
+```{r}
+# Save cleaned maternal mortality data as RDS
+#The function saveRDS() writes a single R object to a file while preserving the exact structure and data types.
+saveRDS(maternal_clean,                                          #Saving the maternal_clean in an RDS file.
+        "data/clean/maternal_mortality_clean.rds")               #Providing the directory and the file name
+```
+
+```{r}
+# Read CSV back in
+#This reads the cleaned maternal mortality dataset back into R from the CSV file and stores it in a new object.
+maternal_csv <- read.csv("data/clean/maternal_mortality_clean.csv",# Provides the link to where the file is stored and creating the new object
+                          stringsAsFactors = FALSE)                # Ensures that text columns are read as character vectors
+
+```
+
+```{r}
+# Read RDS back in
+#This reads the cleaned maternal mortality dataset of RDS back into the R code and stores it in a new object
+maternal_rds <- readRDS("data/clean/maternal_mortality_clean.rds") # Creating the object maternal_rds
+```
+
+```{r}
+# Verify structures
+#Using string to verify that both data frames are correct before moving on to the next section.
+str(maternal_csv) # Data Frame validation for the CSV file
+str(maternal_rds) # Data Frame validation for the RDS file
+```
+
+# Infant Mortality Rate
+
+```{r}
+# Read Infant mortality data
+#This code reads the CSV file containing the Infant mortality rate and stores it into a data frame
+#Read.csv() is assigned to the variable maternal_raw, using the <- which is used to indicate that the data is in its original uncleaned form.
+#stringASFactors is a logical variable that prevents R from automatically converting text columns into factor variables. Very important because it's easier to clean and transform
+Infant_raw <- read.csv("data/raw/Infant mortality rate.csv",#creating the data frame infant_raw
+                          stringsAsFactors = FALSE)
+```
+
+```{r}
+# Inspect structure
+#We use the str() to display a compact summary of the internal structure of the object Infant_raw
+str(Infant_raw)
+```
+
+```{r}
+# View first few rows
+#It returns the fist six observations, and helps to confirm that the data loaded correctly
+#Allows to see the column names, verify the values, and spot obvious issues.
+head(Infant_raw)
+```
+
+```{r}
+# Create cleaned infant mortality dataset
+#We are taking the dataset maternal_raw and selecting the columns we need for the assignmnet
+# We are then renaming the columns by extracting the the columns from maternal_raw
+infant_clean <- data.frame(         #Creating the datafram infant_clean
+  country = Infant_raw$name,        # Creating the column country by extracting the name column
+  variable = Infant_raw$deaths.1,   # Creating the variable column using the column deaths.1
+  region = Infant_raw$ranking,      # Creating the variable region using the column rankings
+  stringsAsFactors = FALSE          # Ensures that text variables remain character vectors and not automatically converting to other factors
+)
+```
+
+```{r}
+# Ensure correct data types
+# Sets the data types of the variable of the infant clean data to ensure they are appropriate for analysis
+#Converts the columns using the as.character for text and the as numeric as numeric to allow for mathematical operations
+infant_clean$country <- as.character(infant_clean$country)  # Ensures that country is Text
+infant_clean$variable <- as.numeric(infant_clean$variable)  # Ensures variable is numeric
+infant_clean$region <- as.character(infant_clean$region)    # Ensures region is text
+```
+
+```{r}
+# Confirm structure to ensure the columns are the proper data types
+str(infant_clean)
+```
+
+```{r}
+# View first few rows
+head(infant_clean)
+```
+
+```{r}
+# Save cleaned infant mortality data as CSV
+#write.csv() used to export a data frame from R into a CSV file
+write.csv(infant_clean,                                #Using the write.csv() we use the infant_clean file which contains the finalized cleaned version of the dataset
+          "data/clean/infant_mortality_clean.csv",     #Specifies the file path and the file name
+          row.names = FALSE)                           #row.names False is a logical value that prevents R from writing row numbers as an extra column within the CSV file
+```
+
+```{r}
+# Save cleaned infant mortality data as RDS
+# The function saveRDS() writes a single R object to a file while preserving the exact structure and data types
+saveRDS(infant_clean,                                  #Saving the infant_clean in an RDS file
+        "data/clean/infant_mortality_clean.rds")       #Providing the directory and the file name
+```
+
+# Life Expectancy At Birth
+
+```{r}
+# Read Life Expectancy at Birth data
+#This code reads the CSV file containing the Life Expectancy and stores it into a data frame
+#Read.csv() is assigned to the variable maternal_raw, using the <- which is used to indicate that the data is in its original uncleaned form.
+#StringASFactors is a logical variable that prevents R from automatically converting text columns into factor variables. Very important because it's easier to clean and transform
+life_raw <- read.csv("data/raw/Life expectancy at birth.csv",    #Creating the data frame life_raw
+                          stringsAsFactors = FALSE)
+```
+
+```{r}
+# Inspect structure
+#We use the str() to display a compact summaryh of the internal structure of the object life_raw
+str(life_raw)
+```
+
+```{r}
+# View first few rows
+#Head() returns the first six observations, and helps to confirm that the data loaded correctly
+#Allows to see the column names, verify the values, and spot obvious issues
+head(life_raw)
+```
+
+```{r}
+# Create cleaned life expectancy dataset
+#We are taking the dataset life_raw and selecting the columns we need for the assignment
+# We are then renaming the columns by extracting the columns from life_raw
+life_clean <- data.frame(             #Creating the dataframe life_raw
+  country = life_raw$name,        # Creating the column country by extracting the name column
+  variable = life_raw$years,   # Creating the variable column using the column years
+  region = life_raw$region,      # Creating the variable region using the column Region
+  stringsAsFactors = FALSE
+)
+```
+
+```{r}
+# Ensure correct data types
+# Sets the data types of the variable of the life clean data to ensure they are appropriate for analysis
+#Converts the columns using the as.character for text and the numeric as numeric to allow for mathematical operations
+life_clean$country <- as.character(life_clean$country)  # Ensures that country is text
+life_clean$variable <- as.numeric(life_clean$variable)  # Ensures variable is Numeric
+life_clean$region <- as.character(life_clean$region)    # Ensures region is text
+```
+
+```{r}
+# Confirm structure to ensure the columns are the proper data types
+str(life_clean)
+```
+
+```{r}
+# View first few rows
+head(life_clean)
+```
+
+```{r}
+# Save cleaned Life Expectancy data as CSV
+#write.csv() used to export a data frame from R into a CSV file
+write.csv(life_clean,                       #Using the write.csv() we use the life_clean file which contains the finalized cleaned version of the dataset
+          "data/clean/Life_Expectancy_clean.csv", # Specifies the file path and the file name
+          row.names = FALSE)                      #row.names False is a logical value that prevents R from writing row numbers as an extra column within the CSV file
+```
+
+```{r}
+# Save cleaned Life Expectancy data as RDS
+#The function saveRDS() writes a signle R object to a file while preserving the exact structure and data types
+saveRDS(life_clean,                                #Saving the life_clean in an RDS_File
+        "data/clean/Life_Expectancy_clean.rds")      #Providing the directory and the file name
+```
+
+# Verify Work
+
+```{r}
+# List all cleaned files
+list.files("data/clean")
+```
+
+```{r}
+# Read all cleaned datasets
+maternal_final <- readRDS("data/clean/maternal_mortality_clean.rds")
+infant_final <- readRDS("data/clean/infant_mortality_clean.rds")
+life_final <- readRDS("data/clean/Life_Expectancy_clean.rds")
+
+# Verify structures
+str(maternal_final) #verify the maternal dataset
+str(infant_final)   #verify infant mortality dataset
+str(life_final)    #verify life expectancy dataset
+```
+
